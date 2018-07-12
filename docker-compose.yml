@@ -1,0 +1,62 @@
+---
+version: "2.2"
+services:
+
+  libravatar:
+    container_name: libravatar
+    image: libravatar:dev
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: libravatar
+      DB_PASS: Ed6DYAugfqp6YJucC3ul7E36QYytacx2OehSL2hIl0V1ggbfufo5nax3SI1w6PD
+      SECRETKEY: PZXGEnVdlxp0d2H4sxWn26KNXdQAkIB1rXxSASKufOURwr6SqPXSqf8nk3SXA5Y
+      SITENAME: 'libravatar.org'
+      FROMEMAIL: 'accounts@libravatar.org'
+      SUPPORTEMAIL: 'support@libravatar.org'
+      ADMINEMAIL: 'dev@libravatar.org'
+      EMAIL_HOST: 'smtp.libravatar.org'
+      EMAIL_PORT: 587
+      EMAIL_HOST_USER: 'accounts@libravatar.org'
+      EMAIL_HOST_PASSWORD: 'HXcDYbaOIrxHsvhY'
+      EMAIL_USE_TLS: 'True'
+      EMAIL_USE_SSL: 'False'
+      APACHE_CERT: /certs/libravatar.org.crt
+      APACHE_KEY: /certs/libravatar.org.key
+      APACHE_CHAIN: /certs/libravatar.org.full
+      SLAVE_CERT: /certs/libravatar.org.crt
+      SLAVE_KEY: /certs/libravatar.org.key
+      SLAVE_CHAIN: /certs/libravatar.org.full
+      WWWSERVERNAME: avatars.libravatar.org
+      WWWSERVERALIAS: avatars.libravatar.org
+      CDNSERVERNAME: cdn.libravatar.org
+      CDNSERVERALIAS: cdn.libravatar.org
+      SECCDNSERVERNAME: seccdn.libravatar.org
+      SECCDNSERVERALIAS: seccdn.libravatar.org
+      AUTH_LDAP_ENABLED: 'false'
+      AUTH_LDAP_BIND_DN: "uid=libravatar,ou=binddn,dc=example,dc=com"
+      AUTH_LDAP_BIND_PASSWORD: "s6UWzR0eDfu6OXs"
+      AUTH_LDAP_SERVER_URI: "ldaps://ldap.example.com:636/"
+      AUTH_LDAP_USER_SEARCH: 'LDAPSearch("ou=people,dc=example,dc=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")'
+    volumes:
+      - ./CERTS/seccdn.libravatar.org.crt:/etc/libravatar/seccdn.crt:ro
+      - ./CERTS/seccdn.libravatar.org.key:/etc/libravatar/seccdn.pem:ro
+      - ./CERTS/seccdn.libravatar.org.full:/etc/libravatar/seccdn-chain.pem:ro
+      - ./CERTS/libravatar.org.crt:/etc/libravatar/www.crt:ro
+      - ./CERTS/libravatar.org.key:/etc/libravatar/www.pem:ro
+      - ./CERTS/libravatar.org.full:/etc/libravatar/www-chain.pem:ro
+      - ./vars/acme:/var/www/acme
+      - ./vars/pictures:/var/lib/libravatar:rw
+
+  postgres:
+    image: postgres:alpine
+    restart: always
+    volumes:
+      - ./vars/postgresql/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: libravatar
+      POSTGRES_PASSWORD: superpassword
+...
